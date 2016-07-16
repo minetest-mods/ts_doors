@@ -20,8 +20,20 @@ function ts_doors.register_door(recipe, description, texture)
 		}
 	})
 
+	doors.register("ts_door_full_" .. recipe:gsub(":", "_"), {
+		tiles = {{ name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR270^[colorize:#fff:30^ts_doors_base_full.png^[noalpha", backface_culling = true }},
+		description = description .. " Door",
+		inventory_image = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. "^[transformR270^[colorize:#fff:30^ts_doors_base_full_inv.png^[noalpha^[makealpha:0,255,0",
+		groups = door_groups,
+		recipe = {
+			{recipe},
+			{"ts_door_" .. recipe:gsub(":", "_")},
+		}
+	})
 
-	groups.level = 2
+
+
+	door_groups.level = 2
 
 	doors.register("ts_door_locked_" .. recipe:gsub(":", "_"), {
 		tiles = {{ name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR270^[colorize:#fff:30^ts_doors_base_locked.png^[noalpha^[makealpha:0,255,0", backface_culling = true }},
@@ -35,6 +47,20 @@ function ts_doors.register_door(recipe, description, texture)
 			{recipe, recipe},
 			{recipe, "default:steel_ingot"},
 			{recipe, recipe},
+		}
+	})
+
+	doors.register("ts_door_full_locked_" .. recipe:gsub(":", "_"), {
+		tiles = {{ name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR270^[colorize:#fff:30^ts_doors_base_full_locked.png^[noalpha", backface_culling = true }},
+		description = description .. " Locked Door",
+		inventory_image = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. "^[transformR270^[colorize:#fff:30^ts_doors_base_full_locked_inv.png^[noalpha^[makealpha:0,255,0",
+		protected = true,
+		groups = door_groups,
+		sound_open = "doors_steel_door_open",
+		sound_close = "doors_steel_door_close",
+		recipe = {
+			{recipe},
+			{"ts_door_locked_" .. recipe:gsub(":", "_")},
 		}
 	})
 end
