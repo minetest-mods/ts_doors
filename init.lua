@@ -27,7 +27,7 @@ function ts_doors.register_door(recipe, description, texture)
 		groups = door_groups,
 		recipe = {
 			{recipe},
-			{"ts_door_" .. recipe:gsub(":", "_")},
+			{"doors:ts_door_" .. recipe:gsub(":", "_")},
 		}
 	})
 
@@ -60,7 +60,7 @@ function ts_doors.register_door(recipe, description, texture)
 		sound_close = "doors_steel_door_close",
 		recipe = {
 			{recipe},
-			{"ts_door_locked_" .. recipe:gsub(":", "_")},
+			{"doors:ts_door_locked_" .. recipe:gsub(":", "_")},
 		}
 	})
 end
