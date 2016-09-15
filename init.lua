@@ -42,7 +42,7 @@ function ts_doors.register_door(item, description, texture, recipe, locked, wind
 		if windowed == true or windowed == nil then
 			doors.register("ts_doors:door_" .. item:gsub(":", "_"), {
 				tiles = {{ name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base.png^[noalpha^[makealpha:0,255,0", backface_culling = true }},
-				description = description .. " Door",
+				description = "Windowed " .. description .. " Door",
 				inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_inv.png^[noalpha^[makealpha:0,255,0",
 				groups = door_groups,
 				recipe = {
@@ -53,7 +53,7 @@ function ts_doors.register_door(item, description, texture, recipe, locked, wind
 			})
 
 			doors.register_trapdoor("ts_doors:trapdoor_" .. item:gsub(":", "_"), {
-				description = description .. " Trapdoor",
+				description = "Windowed " .. description .. " Trapdoor",
 				inventory_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor.png^[noalpha^[makealpha:0,255,0",
 				wield_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor.png^[noalpha^[makealpha:0,255,0",
 				tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor.png^[noalpha^[makealpha:0,255,0",
@@ -72,7 +72,7 @@ function ts_doors.register_door(item, description, texture, recipe, locked, wind
 		if windowed == false or windowed == nil then
 			doors.register("ts_doors:door_full_" .. item:gsub(":", "_"), {
 				tiles = {{ name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full.png^[noalpha", backface_culling = true }},
-				description = description .. " Door",
+				description = "Solid " .. description .. " Door",
 				inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full_inv.png^[noalpha^[makealpha:0,255,0",
 				groups = door_groups,
 				recipe = {
@@ -82,7 +82,7 @@ function ts_doors.register_door(item, description, texture, recipe, locked, wind
 			})
 
 			doors.register_trapdoor("ts_doors:trapdoor_full_" .. item:gsub(":", "_"), {
-				description = description .. " Trapdoor",
+				description = "Solid " .. description .. " Trapdoor",
 				inventory_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full.png^[noalpha",
 				wield_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full.png^[noalpha",
 				tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full.png^[noalpha",
@@ -107,7 +107,7 @@ function ts_doors.register_door(item, description, texture, recipe, locked, wind
 		if windowed == true or windowed == nil then
 			doors.register("ts_doors:door_locked_" .. item:gsub(":", "_"), {
 				tiles = {{ name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_locked.png^[noalpha^[makealpha:0,255,0", backface_culling = true }},
-				description = description .. " Locked Door",
+				description = "Locked Windowed " .. description .. " Door",
 				inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_locked_inv.png^[noalpha^[makealpha:0,255,0",
 				protected = true,
 				groups = door_groups,
@@ -121,7 +121,7 @@ function ts_doors.register_door(item, description, texture, recipe, locked, wind
 			})
 
 			doors.register_trapdoor("ts_doors:trapdoor_locked_" .. item:gsub(":", "_"), {
-				description = description .. " Locked Trapdoor",
+				description = "Locked Windowed " .. description .. " Trapdoor",
 				inventory_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_locked.png^[noalpha^[makealpha:0,255,0",
 				wield_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_locked.png^[noalpha^[makealpha:0,255,0",
 				tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_locked.png^[noalpha^[makealpha:0,255,0",
@@ -146,7 +146,7 @@ function ts_doors.register_door(item, description, texture, recipe, locked, wind
 		if windowed == false or windowed == nil then
 			doors.register("ts_doors:door_full_locked_" .. item:gsub(":", "_"), {
 				tiles = {{ name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full_locked.png^[noalpha", backface_culling = true }},
-				description = description .. " Locked Door",
+				description = "Locked Solid " .. description .. " Door",
 				inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full_locked_inv.png^[noalpha^[makealpha:0,255,0",
 				protected = true,
 				groups = door_groups,
@@ -159,7 +159,7 @@ function ts_doors.register_door(item, description, texture, recipe, locked, wind
 			})
 
 			doors.register_trapdoor("ts_doors:trapdoor_full_locked_" .. item:gsub(":", "_"), {
-				description = description .. " Locked Trapdoor",
+				description = "Locked Solid " .. description .. " Trapdoor",
 				inventory_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full_locked.png^[noalpha",
 				wield_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full_locked.png^[noalpha",
 				tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full_locked.png^[noalpha",
@@ -244,7 +244,7 @@ minetest.register_craft({ output = "doors:trapdoor_steel", recipe = {
 local texture = minetest.registered_nodes["default:steelblock"].tiles[1]
 minetest.override_item("doors:door_steel", {
 	inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_locked_inv.png^[noalpha^[makealpha:0,255,0",
-	description = "Locked Steel Door",
+	description = "Locked Windowed Steel Door",
 })
 
 local tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_locked.png^[noalpha^[makealpha:0,255,0"
@@ -252,7 +252,7 @@ local tile_side = texture .. "^[colorize:#fff:30"
 minetest.override_item("doors:trapdoor_steel", {
 	inventory_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_locked.png^[noalpha^[makealpha:0,255,0",
 	wield_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_locked.png^[noalpha^[makealpha:0,255,0",
-	description = "Locked Steel Trapdoor",
+	description = "Locked Windowed Steel Trapdoor",
 	tiles = { tile_front, tile_front, tile_side, tile_side, tile_side, tile_side },
 })
 
@@ -270,10 +270,10 @@ minetest.override_item("doors:door_steel_b", {
 -- Overwrite default wooden doors
 -- TODO: Custom textures
 minetest.override_item("doors:door_wood", {
-	description = "Mixed Wood Door",
+	description = "Windowed Mixed Wood Door",
 })
 minetest.override_item("doors:trapdoor", {
-	description = "Mixed Wood Trapdoor",
+	description = "Windowed Mixed Wood Trapdoor",
 })
 
 -- Legacy support
