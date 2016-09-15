@@ -137,8 +137,8 @@ function ts_doors.register_door(item, description, texture, recipe, locked, wind
 			minetest.register_craft({
 				output = "ts_doors:trapdoor_locked_" .. item:gsub(":", "_"),
 				recipe = {
-					{"default:steel_ingot"},
 					{"ts_doors:trapdoor_" .. item:gsub(":", "_")},
+					{"default:steel_ingot"},
 				}
 			})
 
@@ -237,14 +237,8 @@ minetest.register_craft({ output = "doors:door_steel", recipe = {
 	{ "default:steel_ingot", "default:steel_ingot", "" },
 	{ "default:steel_ingot", "default:steel_ingot", "default:steel_ingot" },
 	{ "default:steel_ingot", "default:steel_ingot", "" }, } })
-minetest.register_craft({ output = "ts_doors:door_full_locked_default_steelblock", recipe = {
-	{ "default:steel_ingot" },
-	{ "doors:door_steel" }, } })
 minetest.register_craft({ output = "doors:trapdoor_steel", recipe = {
 	{ "ts_doors:trapdoor_default_steelblock" },
-	{ "default:steel_ingot" }, } })
-minetest.register_craft({ output = "ts_doors:trapdoor_full_locked_default_steelblock", recipe = {
-	{ "doors:trapdoor_steel" },
 	{ "default:steel_ingot" }, } })
 
 local texture = minetest.registered_nodes["default:steelblock"].tiles[1]
