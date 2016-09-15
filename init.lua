@@ -227,7 +227,14 @@ if minetest.get_modpath("technic") then
 end
 
 -- Overwrite steel door and wooden door from Minetest Game
--- TODO: Remove craft of doors:door_steel with clear_craft
+
+-- Code does not work in Minetest 0.4.14, so we check first
+-- TODO: Remove this check when Minetest with minetest.clear_craft is officially released
+if minetest.clear_craft ~= nil then
+	-- Remove the default recipes for the default steel doors since we add our own recipes
+	minetest.clear_craft({output = "doors:door_steel"})
+	minetest.clear_craft({output = "doors:trapdoor_steel"})
+end
 
 ts_doors.register_door("default:steelblock"  , "Steel"  , minetest.registered_nodes["default:steelblock"].tiles[1], "default:steel_ingot", nil, false)
 ts_doors.register_door("default:steelblock"  , "Steel"  , minetest.registered_nodes["default:steelblock"].tiles[1], "default:steel_ingot", false, true)
