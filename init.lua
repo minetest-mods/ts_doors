@@ -227,7 +227,6 @@ function ts_doors.workshop.start(pos)
 	then
 		return
 	end
-	minetest.chat_send_all("start")
 
 	if not inv:room_for_item("output", { name = template, count = 1 }) then
 		return
@@ -241,7 +240,6 @@ function ts_doors.workshop.start(pos)
 end
 
 function ts_doors.workshop.step(pos)
-	minetest.chat_send_all("step")
 	local node = minetest.get_node(pos)
 	if node.name ~= "ts_doors:workshop" then
 		return
