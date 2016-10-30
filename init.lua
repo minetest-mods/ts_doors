@@ -289,29 +289,39 @@ function ts_doors.workshop.update_formspec(pos)
 	meta:set_int("page", page)
 
 	local fs = "size[9,9;]"
-	if not locked then
-		fs = fs .. "button[0,0;2,1;unlocked;" .. minetest.colorize("#ffff00", "Unlocked") .. "]"
-		fs = fs .. "button[0,0.75;2,1;locked;Locked]"
+	if minetest.colorize then
+		if not locked then
+			fs = fs .. "button[0,0;2,1;unlocked;" .. minetest.colorize("#ffff00", "Unlocked") .. "]"
+			fs = fs .. "button[0,0.75;2,1;locked;Locked]"
+		else
+			fs = fs .. "button[0,0;2,1;unlocked;Unlocked]"
+			fs = fs .. "button[0,0.75;2,1;locked;" .. minetest.colorize("#ffff00", "Locked") .. "]"
+		end
+
+		if not solid then
+			fs = fs .. "button[2,0;2,1;windowed;" .. minetest.colorize("#ffff00", "Windowed") .. "]"
+			fs = fs .. "button[2,0.75;2,1;solid;Solid]"
+		else
+			fs = fs .. "button[2,0;2,1;windowed;Windowed]"
+			fs = fs .. "button[2,0.75;2,1;solid;" .. minetest.colorize("#ffff00", "Solid") .. "]"
+		end
+
+		if not trapdoor then
+			fs = fs .. "button[4,0;2,1;doors;" .. minetest.colorize("#ffff00", "Doors") .. "]"
+			fs = fs .. "button[4,0.75;2,1;trapdoors;Trapdoors]"
+		else
+			fs = fs .. "button[4,0;2,1;doors;Doors]"
+			fs = fs .. "button[4,0.75;2,1;trapdoors;" .. minetest.colorize("#ffff00", "Trapdoors") .. "]"
+		end
 	else
 		fs = fs .. "button[0,0;2,1;unlocked;Unlocked]"
-		fs = fs .. "button[0,0.75;2,1;locked;" .. minetest.colorize("#ffff00", "Locked") .. "]"
-	end
-
-	if not solid then
-		fs = fs .. "button[2,0;2,1;windowed;" .. minetest.colorize("#ffff00", "Windowed") .. "]"
-		fs = fs .. "button[2,0.75;2,1;solid;Solid]"
-	else
+		fs = fs .. "button[0,0.75;2,1;locked;Locked]"
 		fs = fs .. "button[2,0;2,1;windowed;Windowed]"
-		fs = fs .. "button[2,0.75;2,1;solid;" .. minetest.colorize("#ffff00", "Solid") .. "]"
+		fs = fs .. "button[2,0.75;2,1;solid;Solid]"
+		fs = fs .. "button[4,0;2,1;doors;Doors]"
+		fs = fs .. "button[4,0.75;2,1;trapdoors;Trapdoors]"
 	end
 
-	if not trapdoor then
-		fs = fs .. "button[4,0;2,1;doors;" .. minetest.colorize("#ffff00", "Doors") .. "]"
-		fs = fs .. "button[4,0.75;2,1;trapdoors;Trapdoors]"
-	else
-		fs = fs .. "button[4,0;2,1;doors;Doors]"
-		fs = fs .. "button[4,0.75;2,1;trapdoors;" .. minetest.colorize("#ffff00", "Trapdoors") .. "]"
-	end
 	fs = fs .. "label[0,1.5;Material]"
 	fs = fs .. "label[0,1.75;needed]"
 	fs = fs .. "list[context;material_needed;0,2.1;1,1]"
