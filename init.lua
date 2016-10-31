@@ -549,16 +549,48 @@ local function on_construct(pos)
 	update_inventory(pos)
 end
 
-local function allow_metadata_inventory_take(pos, listname, index, stack, player)
-	if listname == "material" or listname == "steel" or listname == "output" then
+local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
+	return 0
+end
+
+local function allow_metadata_inventory_put(pos, listname, index, stack, player)
+	if listname == "material" then
+		local meta = minetest.get_meta(pos)
+		local selection = meta:get_string("selection")
+		if selection and selection ~= "" then
+			local door = selection:sub(10)
+			if door:sub(0, 4) == "trap" then
+				door = door:sub(10)
+			else
+				door = door:sub(6)
+			end
+			if door:sub(0, 4) == "full" then
+				door = door:sub(6)
+			end
+			if door:sub(0, 7) == "locked_" then
+				door = door:sub(8)
+			end
+			if stack:get_name() == ts_doors.registered_doors[door] then
+				return stack:get_count()
+			else
+				return 0
+			end
+		else
+			return 0
+		end
+	elseif listname == "steel" and (stack:get_name() == "default:steel_ingot") then
 		return stack:get_count()
 	else
 		return 0
 	end
 end
 
-local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
-	return 0
+local function allow_metadata_inventory_take(pos, listname, index, stack, player)
+	if listname == "material" or listname == "steel" or listname == "output" then
+		return stack:get_count()
+	else
+		return 0
+	end
 end
 
 local function on_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
@@ -571,16 +603,6 @@ end
 
 local function on_metadata_inventory_take(pos, listname, index, stack, player)
 	update_inventory(pos)
-end
-
-local function allow_metadata_inventory_put(pos, listname, index, stack, player)
-	if listname == "material" then
-		return stack:get_count()
-	elseif listname == "steel" and (stack:get_name() == "default:steel_ingot") then
-		return stack:get_count()
-	else
-		return 0
-	end
 end
 
 local function can_dig(pos, player)
