@@ -17,6 +17,46 @@ local function copytable(orig)
 	return copy
 end
 
+local function get_door_name(meta, item)
+	local door = ""
+	local int_to_bool = {}
+	int_to_bool[0] = false
+	int_to_bool[1] = true
+	local trapdoor = int_to_bool[meta:get_int("trapdoor")] or false
+	local locked = int_to_bool[meta:get_int("locked")] or false
+	local solid = int_to_bool[meta:get_int("solid")] or false
+	if trapdoor then
+		if locked then
+			if solid then
+				door = "ts_doors:trapdoor_full_locked_" .. item:gsub(":", "_")
+			else
+				door = "ts_doors:trapdoor_locked_" .. item:gsub(":", "_")
+			end
+		else
+			if solid then
+				door = "ts_doors:trapdoor_full_" .. item:gsub(":", "_")
+			else
+				door = "ts_doors:trapdoor_" .. item:gsub(":", "_")
+			end
+		end
+	else
+		if locked then
+			if solid then
+				door = "ts_doors:door_full_locked_" .. item:gsub(":", "_")
+			else
+				door = "ts_doors:door_locked_" .. item:gsub(":", "_")
+			end
+		else
+			if solid then
+				door = "ts_doors:door_full_" .. item:gsub(":", "_")
+			else
+				door = "ts_doors:door_" .. item:gsub(":", "_")
+			end
+		end
+	end
+	return door
+end
+
 local function register_alias(name, convert_to)
 	minetest.register_alias(name, convert_to)
 	minetest.register_alias(name .. "_a", convert_to .. "_a")
@@ -211,7 +251,7 @@ function ts_doors.workshop.start(pos)
 
 	local meta = minetest.get_meta(pos)
 	local inv = meta:get_inventory()
-	local template = inv:get_stack("template", 1):get_name()
+	local selection = meta:get_string("selection")
 	local material = inv:get_stack("material", 1):get_name()
 	local material_needed_name = inv:get_stack("material_needed", 1):get_name()
 	local material_needed = inv:get_stack("material_needed", 1):get_count()
@@ -222,17 +262,17 @@ function ts_doors.workshop.start(pos)
 
 	if not (material_ok and steel_ok
 			and (steel and steel == "default:steel_ingot" or steel_needed == 0)
-			and template and template ~= ""
+			and selection and selection ~= ""
 			and material == material_needed_name)
 	then
 		return
 	end
 
-	if not inv:room_for_item("output", { name = template, count = 1 }) then
+	if not inv:room_for_item("output", { name = selection, count = 1 }) then
 		return
 	end
 
-	meta:set_string("working_on", template)
+	meta:set_string("working_on", selection)
 	meta:set_int("progress", 0)
 	inv:remove_item("material", { name = material, count = material_needed })
 	inv:remove_item("steel", { name = "default:steel_ingot", count = steel_needed })
@@ -272,11 +312,11 @@ function ts_doors.workshop.update_formspec(pos)
 	local meta = minetest.get_meta(pos)
 	local page = meta:get_int("page")
 	local maxpage = meta:get_int("maxpage")
+	local selection = meta:get_string("selection")
 
 	local int_to_bool = {}
 	int_to_bool[0] = false
 	int_to_bool[1] = true
-
 	local trapdoor = int_to_bool[meta:get_int("trapdoor")] or false
 	local locked = int_to_bool[meta:get_int("locked")] or false
 	local solid = int_to_bool[meta:get_int("solid")] or false
@@ -332,12 +372,27 @@ function ts_doors.workshop.update_formspec(pos)
 	fs = fs .. "list[context;steel_needed;1,2.1;1,1]"
 	fs = fs .. "label[1,3.1;Input]"
 	fs = fs .. "list[context;steel;1,3.5;1,1]"
-	fs = fs .. "list[context;list;2,1.75;4,3;" .. tostring((page - 1) * 12) .. "]"
+	local x = 2
+	local y = 1.75
+	local count = 0
+	for item, recipe in pairs(ts_doors.registered_doors) do
+		count = count + 1
+		if (count >= (page - 1) * 12 + 1 and count <= page * 12) then
+			local door = get_door_name(meta, item)
+			fs = fs .. "item_image_button[" .. x .. "," .. y .. ";1,1;" .. door .. ";" .. door .. ";]"
+			x = x + 1
+			if x > 5 then
+				x = 2
+				y = y + 1
+			end
+		end
+	end
 	fs = fs .. "button[6,2.25;1,1;prevpage;<-]"
 	fs = fs .. "button[6,3.25;1,1;nextpage;->]"
 	fs = fs .. "label[6,4;" .. string.format("Page %s of %s", page, maxpage) .. "]"
-	fs = fs .. "label[7.5,0.5;Template]"
-	fs = fs .. "list[context;template;7.5,1;1,1]"
+	fs = fs .. "label[7.5,0.2;Current]"
+	fs = fs .. "label[7.5,0.5;Door]"
+	fs = fs .. "item_image[7.5,1;1,1;" .. selection .. "]"
 	fs = fs .. "image[7.5,2;1,1;gui_furnace_arrow_bg.png^[lowpart:" .. meta:get_int("progress") * 10 .. ":gui_furnace_arrow_fg.png^[transformR180]"
 	fs = fs .. "list[context;output;7.5,3;1,1]"
 	fs = fs .. "list[current_player;main;0.5,5;8,4]"
@@ -364,9 +419,6 @@ local function update_inventory(pos)
 	inv:set_size("steel_needed", 1)
 	inv:set_size("material", 1)
 	inv:set_size("steel", 1)
-	inv:set_size("list", 0)
-	inv:set_size("list", math.ceil(itemcount / 12) * 12) -- 4x3
-	inv:set_size("template", 1)
 	inv:set_size("output", 1)
 
 	local int_to_bool = {}
@@ -408,9 +460,9 @@ local function update_inventory(pos)
 			end
 		end
 	end
-	local templatestack = inv:get_stack("template", 1)
-	if templatestack and templatestack:to_string() ~= "" then
-		local door = templatestack:to_table().name:sub(10)
+	local selection = meta:get_string("selection")
+	if selection and selection ~= "" then
+		local door = selection:sub(10)
 		if door:sub(0, 4) == "trap" then
 			trapdoor = true
 			door = door:sub(10)
@@ -468,6 +520,12 @@ local function on_receive_fields(pos, formname, fields, sender)
 		meta:set_int("page", meta:get_int("page") - 1)
 	elseif fields.nextpage then
 		meta:set_int("page", meta:get_int("page") + 1)
+	else
+		for item, recipe in pairs(ts_doors.registered_doors) do
+			if fields[get_door_name(meta, item)] then
+				meta:set_string("selection", get_door_name(meta, item))
+			end
+		end
 	end
 	update_inventory(pos)
 end
@@ -481,6 +539,7 @@ local function on_construct(pos)
 	meta:set_string("working_on", "")
 	meta:set_int("page", 1)
 	meta:set_int("maxpage", 1)
+	meta:set_string("selection", "")
 	update_inventory(pos)
 end
 
@@ -493,14 +552,7 @@ local function allow_metadata_inventory_take(pos, listname, index, stack, player
 end
 
 local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
-	if from_list == "list" and to_list == "template" then
-		return 1
-	elseif from_list == "template" and to_list == "list" then
-		local inv = minetest.get_meta(pos):get_inventory()
-		return 1
-	else
-		return 0
-	end
+	return 0
 end
 
 local function on_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
