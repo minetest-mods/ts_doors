@@ -650,6 +650,7 @@ minetest.register_node("ts_doors:workshop", {
 	on_metadata_inventory_put = on_metadata_inventory_put,
 	on_metadata_inventory_take = on_metadata_inventory_take,
 	can_dig = can_dig,
+	sounds = default.node_sound_wood_defaults(),
 })
 
 minetest.register_lbm({
