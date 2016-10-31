@@ -599,7 +599,7 @@ minetest.register_node("ts_doors:workshop", {
 	drawtype = "nodebox",
 	paramtype = "light",
 	paramtype2 = "facedir",
-	groups = { cracky = 1 },
+	groups = { choppy = 2, oddly_breakable_by_hand = 2 },
 	node_box = {
 		type = "fixed",
 		fixed = {
@@ -639,4 +639,10 @@ minetest.register_craft({
 		{ "default:wood", "doors:door_wood", "default:wood" },
 		{ "default:wood", "default:wood", "default:wood" },
 	}
+})
+
+minetest.register_craft({
+	type = "fuel",
+	recipe = "ts_doors:workshop",
+	burntime = 30,
 })
