@@ -329,6 +329,7 @@ function ts_doors.workshop.update_formspec(pos)
 	meta:set_int("page", page)
 
 	local fs = "size[9,9;]"
+	fs = fs .. default.gui_bg .. default.gui_bg_img .. default.gui_slots
 	if minetest.colorize then
 		if not locked then
 			fs = fs .. "button[0,0;2,1;unlocked;" .. minetest.colorize("#ffff00", "Unlocked") .. "]"
@@ -362,16 +363,16 @@ function ts_doors.workshop.update_formspec(pos)
 		fs = fs .. "button[4,0.75;2,1;trapdoors;Trapdoors]"
 	end
 
-	fs = fs .. "label[0,1.5;Material]"
-	fs = fs .. "label[0,1.75;needed]"
-	fs = fs .. "list[context;material_needed;0,2.1;1,1]"
-	fs = fs .. "label[0,3.1;Input]"
-	fs = fs .. "list[context;material;0,3.5;1,1]"
-	fs = fs .. "label[1,1.5;Steel]"
-	fs = fs .. "label[1,1.75;needed]"
-	fs = fs .. "list[context;steel_needed;1,2.1;1,1]"
-	fs = fs .. "label[1,3.1;Input]"
-	fs = fs .. "list[context;steel;1,3.5;1,1]"
+	fs = fs .. "label[0,1.6;Material]"
+	fs = fs .. "label[0,1.9;needed]"
+	fs = fs .. "list[context;material_needed;0,2.3;1,1]"
+	fs = fs .. "label[0,3.25;Input]"
+	fs = fs .. "list[context;material;0,3.75;1,1]"
+	fs = fs .. "label[1,1.6;Steel]"
+	fs = fs .. "label[1,1.9;needed]"
+	fs = fs .. "list[context;steel_needed;1,2.3;1,1]"
+	fs = fs .. "label[1,3.25;Input]"
+	fs = fs .. "list[context;steel;1,3.75;1,1]"
 	local x = 2
 	local y = 1.75
 	local count = 0
