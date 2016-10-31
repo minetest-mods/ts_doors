@@ -387,9 +387,13 @@ function ts_doors.workshop.update_formspec(pos)
 			end
 		end
 	end
-	fs = fs .. "button[6,2.25;1,1;prevpage;<-]"
-	fs = fs .. "button[6,3.25;1,1;nextpage;->]"
-	fs = fs .. "label[6,4;" .. string.format("Page %s of %s", page, maxpage) .. "]"
+	fs = fs .. "button[6, 1;1,1;noselection;X]"
+	fs = fs .. "tooltip[noselection;Remove Current Selection]"
+	if maxpage > 1 then
+		fs = fs .. "button[6,2.25;1,1;prevpage;<-]"
+		fs = fs .. "button[6,3.25;1,1;nextpage;->]"
+		fs = fs .. "label[6,4;" .. string.format("Page %s of %s", page, maxpage) .. "]"
+	end
 	fs = fs .. "label[7.5,0.2;Current]"
 	fs = fs .. "label[7.5,0.5;Door]"
 	fs = fs .. "item_image[7.5,1;1,1;" .. selection .. "]"
@@ -520,6 +524,8 @@ local function on_receive_fields(pos, formname, fields, sender)
 		meta:set_int("page", meta:get_int("page") - 1)
 	elseif fields.nextpage then
 		meta:set_int("page", meta:get_int("page") + 1)
+	elseif fields.noselection then
+		meta:set_string("selection", "")
 	else
 		for item, recipe in pairs(ts_doors.registered_doors) do
 			if fields[get_door_name(meta, item)] then
