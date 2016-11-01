@@ -285,6 +285,9 @@ function ts_doors.workshop.start(pos)
 	end
 
 	local meta = minetest.get_meta(pos)
+	if meta:get_string("working_on") ~= "" then
+		return
+	end
 	local inv = meta:get_inventory()
 	local selection = meta:get_string("selection")
 	local material = inv:get_stack("material", 1):get_name()
