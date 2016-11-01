@@ -2,6 +2,26 @@ ts_doors = {}
 
 ts_doors.registered_doors = {}
 
+ts_doors.sounds = {}
+
+ts_doors.sounds.metal = {
+	sounds = default.node_sound_metal_defaults(),
+	sound_open = "doors_steel_door_open",
+	sound_close = "doors_steel_door_close",
+}
+
+ts_doors.sounds.wood = {
+	sounds = default.node_sound_wood_defaults(),
+	sound_open = "doors_door_open",
+	sound_close = "doors_door_close"
+}
+
+ts_doors.sounds.glass = {
+	sounds = default.node_sound_glass_defaults(),
+	sound_open = "doors_glass_door_open",
+	sound_close = "doors_glass_door_close",
+}
+
 local function copytable(orig)
 	local orig_type = type(orig)
 	local copy
@@ -63,7 +83,10 @@ local function register_alias(name, convert_to)
 	minetest.register_alias(name .. "_b", convert_to .. "_b")
 end
 
-function ts_doors.register_door(item, description, texture, recipe)
+function ts_doors.register_door(item, description, texture, sounds, recipe)
+	if not sounds then
+		sounds = {}
+	end
 	recipe = recipe or item
 	ts_doors.registered_doors[item:gsub(":", "_")] = recipe
 	register_alias("doors:ts_door_" .. item:gsub(":", "_"), "ts_doors:door_" .. item:gsub(":", "_"))
@@ -88,6 +111,9 @@ function ts_doors.register_door(item, description, texture, recipe)
 		description = description .. " Windowed Door",
 		inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_inv.png^[noalpha^[makealpha:0,255,0",
 		groups = door_groups,
+		sounds = sounds.sounds or nil,
+		sound_open = sounds.sound_open or nil,
+		sound_close = sounds.sound_close or nil,
 	})
 	minetest.override_item("ts_doors:door_" .. item:gsub(":", "_"), {
 		groups = { not_in_creative_inventory = 1 }
@@ -98,6 +124,9 @@ function ts_doors.register_door(item, description, texture, recipe)
 		description = "Solid " .. description .. " Door",
 		inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full_inv.png^[noalpha^[makealpha:0,255,0",
 		groups = door_groups,
+		sounds = sounds.sounds or nil,
+		sound_open = sounds.sound_open or nil,
+		sound_close = sounds.sound_close or nil,
 	})
 	minetest.override_item("ts_doors:door_full_" .. item:gsub(":", "_"), {
 		groups = { not_in_creative_inventory = 1 }
@@ -110,6 +139,9 @@ function ts_doors.register_door(item, description, texture, recipe)
 		tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor.png^[noalpha^[makealpha:0,255,0",
 		tile_side = texture .. "^[colorize:#fff:30",
 		groups = trapdoor_groups,
+		sounds = sounds.sounds or nil,
+		sound_open = sounds.sound_open or nil,
+		sound_close = sounds.sound_close or nil,
 	})
 
 	doors.register_trapdoor("ts_doors:trapdoor_full_" .. item:gsub(":", "_"), {
@@ -119,6 +151,9 @@ function ts_doors.register_door(item, description, texture, recipe)
 		tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full.png^[noalpha",
 		tile_side = texture .. "^[colorize:#fff:30",
 		groups = trapdoor_groups,
+		sounds = sounds.sounds or nil,
+		sound_open = sounds.sound_open or nil,
+		sound_close = sounds.sound_close or nil,
 	})
 
 	door_groups.level = 2
@@ -132,6 +167,9 @@ function ts_doors.register_door(item, description, texture, recipe)
 		groups = door_groups,
 		sound_open = "doors_steel_door_open",
 		sound_close = "doors_steel_door_close",
+		sounds = sounds.sounds or nil,
+		sound_open = sounds.sound_open or nil,
+		sound_close = sounds.sound_close or nil,
 	})
 	minetest.override_item("ts_doors:door_locked_" .. item:gsub(":", "_"), {
 		groups = { not_in_creative_inventory = 1 }
@@ -145,6 +183,9 @@ function ts_doors.register_door(item, description, texture, recipe)
 		groups = door_groups,
 		sound_open = "doors_steel_door_open",
 		sound_close = "doors_steel_door_close",
+		sounds = sounds.sounds or nil,
+		sound_open = sounds.sound_open or nil,
+		sound_close = sounds.sound_close or nil,
 	})
 	minetest.override_item("ts_doors:door_full_locked_" .. item:gsub(":", "_"), {
 		groups = { not_in_creative_inventory = 1 }
@@ -157,10 +198,10 @@ function ts_doors.register_door(item, description, texture, recipe)
 		tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_locked.png^[noalpha^[makealpha:0,255,0",
 		tile_side = texture .. "^[colorize:#fff:30",
 		protected = true,
-		sounds = default.node_sound_stone_defaults(),
-		sound_open = "doors_steel_door_open",
-		sound_close = "doors_steel_door_close",
-		groups = trapdoor_groups
+		groups = trapdoor_groups,
+		sounds = sounds.sounds or nil,
+		sound_open = sounds.sound_open or nil,
+		sound_close = sounds.sound_close or nil,
 	})
 
 	doors.register_trapdoor("ts_doors:trapdoor_full_locked_" .. item:gsub(":", "_"), {
@@ -170,56 +211,56 @@ function ts_doors.register_door(item, description, texture, recipe)
 		tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full_locked.png^[noalpha",
 		tile_side = texture .. "^[colorize:#fff:30",
 		protected = true,
-		sounds = default.node_sound_stone_defaults(),
-		sound_open = "doors_steel_door_open",
-		sound_close = "doors_steel_door_close",
-		groups = trapdoor_groups
+		groups = trapdoor_groups,
+		sounds = sounds.sounds or nil,
+		sound_open = sounds.sound_open or nil,
+		sound_close = sounds.sound_close or nil,
 	})
 end
 
-ts_doors.register_door("default:aspen_wood", "Aspen", "default_aspen_wood.png")
-ts_doors.register_door("default:pine_wood", "Pine", "default_pine_wood.png")
-ts_doors.register_door("default:acacia_wood", "Acacia", "default_acacia_wood.png")
-ts_doors.register_door("default:wood", "Wooden", "default_wood.png")
-ts_doors.register_door("default:junglewood", "Jungle Wood", "default_junglewood.png")
+ts_doors.register_door("default:aspen_wood", "Aspen", "default_aspen_wood.png", ts_doors.sounds.wood)
+ts_doors.register_door("default:pine_wood", "Pine", "default_pine_wood.png", ts_doors.sounds.wood)
+ts_doors.register_door("default:acacia_wood", "Acacia", "default_acacia_wood.png", ts_doors.sounds.wood)
+ts_doors.register_door("default:wood", "Wooden", "default_wood.png", ts_doors.sounds.wood)
+ts_doors.register_door("default:junglewood", "Jungle Wood", "default_junglewood.png", ts_doors.sounds.wood)
 
 if minetest.get_modpath("moretrees") then
-	ts_doors.register_door("moretrees:apple_tree_planks", "Apple Tree", "moretrees_apple_tree_wood.png")
-	ts_doors.register_door("moretrees:beech_planks", "Beech", "moretrees_beech_wood.png")
-	ts_doors.register_door("moretrees:birch_planks", "Birch", "moretrees_birch_wood.png")
-	ts_doors.register_door("moretrees:fir_planks", "Fir", "moretrees_fir_wood.png")
-	ts_doors.register_door("moretrees:oak_planks", "Oak", "moretrees_oak_wood.png")
-	ts_doors.register_door("moretrees:palm_planks", "Palm", "moretrees_palm_wood.png")
-	ts_doors.register_door("moretrees:rubber_tree_planks", "Rubber Tree", "moretrees_rubber_tree_wood.png")
-	ts_doors.register_door("moretrees:sequoia_planks", "Sequoia", "moretrees_sequoia_wood.png")
-	ts_doors.register_door("moretrees:spruce_planks", "Spruce", "moretrees_spruce_wood.png")
-	ts_doors.register_door("moretrees:willow_planks", "Willow", "moretrees_willow_wood.png")
+	ts_doors.register_door("moretrees:apple_tree_planks", "Apple Tree", "moretrees_apple_tree_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("moretrees:beech_planks", "Beech", "moretrees_beech_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("moretrees:birch_planks", "Birch", "moretrees_birch_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("moretrees:fir_planks", "Fir", "moretrees_fir_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("moretrees:oak_planks", "Oak", "moretrees_oak_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("moretrees:palm_planks", "Palm", "moretrees_palm_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("moretrees:rubber_tree_planks", "Rubber Tree", "moretrees_rubber_tree_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("moretrees:sequoia_planks", "Sequoia", "moretrees_sequoia_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("moretrees:spruce_planks", "Spruce", "moretrees_spruce_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("moretrees:willow_planks", "Willow", "moretrees_willow_wood.png", ts_doors.sounds.wood)
 end
 
 
-ts_doors.register_door("default:bronzeblock", "Bronze", "default_bronze_block.png", "default:bronze_ingot")
-ts_doors.register_door("default:copperblock", "Copper", "default_copper_block.png", "default:copper_ingot")
-ts_doors.register_door("default:diamondblock", "Diamond", "default_diamond_block.png", "default:diamond")
-ts_doors.register_door("default:goldblock", "Gold", "default_gold_block.png", "default:gold_ingot")
-ts_doors.register_door("default:steelblock", "Steel", minetest.registered_nodes["default:steelblock"].tiles[1], "default:steel_ingot")
+ts_doors.register_door("default:bronzeblock", "Bronze", "default_bronze_block.png",ts_doors.sounds.metal, "default:bronze_ingot")
+ts_doors.register_door("default:copperblock", "Copper", "default_copper_block.png", ts_doors.sounds.metal, "default:copper_ingot")
+ts_doors.register_door("default:diamondblock", "Diamond", "default_diamond_block.png", ts_doors.sounds.metal, "default:diamond")
+ts_doors.register_door("default:goldblock", "Gold", "default_gold_block.png", ts_doors.sounds.metal, "default:gold_ingot")
+ts_doors.register_door("default:steelblock", "Steel", minetest.registered_nodes["default:steelblock"].tiles[1], ts_doors.sounds.metal, "default:steel_ingot")
 
 if minetest.get_modpath("moreores") then
-	ts_doors.register_door("moreores:mithril_block", "Mithril", "moreores_mithril_block.png", "moreores:mithril_ingot")
-	ts_doors.register_door("moreores:silver_block", "Silver", "moreores_silver_block.png", "moreores:silver_ingot")
-	ts_doors.register_door("moreores:tin_block", "Tin", "moreores_tin_block.png", "moreores:tin_ingot")
+	ts_doors.register_door("moreores:mithril_block", "Mithril", "moreores_mithril_block.png", ts_doors.sounds.metal, "moreores:mithril_ingot")
+	ts_doors.register_door("moreores:silver_block", "Silver", "moreores_silver_block.png", ts_doors.sounds.metal, "moreores:silver_ingot")
+	ts_doors.register_door("moreores:tin_block", "Tin", "moreores_tin_block.png", ts_doors.sounds.metal, "moreores:tin_ingot")
 end
 
 if minetest.get_modpath("technic") then
-	ts_doors.register_door("technic:brass_block", "Brass", "technic_brass_block.png", "technic:brass_ingot")
-	ts_doors.register_door("technic:carbon_steel_block", "Carbon Steel", "technic_carbon_steel_block.png", "technic:carbon_steel_ingot")
-	ts_doors.register_door("technic:cast_iron_block", "Cast Iron", "technic_cast_iron_block.png", "technic:cast_iron_ingot")
-	ts_doors.register_door("technic:chromium_block", "Chromium", "technic_chromium_block.png", "technic:chromium_ingot")
-	ts_doors.register_door("technic:lead_block", "Lead", "technic_lead_block.png", "technic:lead_ingot")
-	ts_doors.register_door("technic:stainless_steel_block", "Stainless Steel", "technic_stainless_steel_block.png", "technic:stainless_steel_ingot")
-	ts_doors.register_door("technic:zinc_block", "Zinc", "technic_zinc_block.png", "technic:zinc_ingot")
+	ts_doors.register_door("technic:brass_block", "Brass", "technic_brass_block.png", ts_doors.sounds.metal, "technic:brass_ingot")
+	ts_doors.register_door("technic:carbon_steel_block", "Carbon Steel", "technic_carbon_steel_block.png", ts_doors.sounds.metal, "technic:carbon_steel_ingot")
+	ts_doors.register_door("technic:cast_iron_block", "Cast Iron", "technic_cast_iron_block.png", ts_doors.sounds.metal, "technic:cast_iron_ingot")
+	ts_doors.register_door("technic:chromium_block", "Chromium", "technic_chromium_block.png", ts_doors.sounds.metal, "technic:chromium_ingot")
+	ts_doors.register_door("technic:lead_block", "Lead", "technic_lead_block.png", ts_doors.sounds.metal, "technic:lead_ingot")
+	ts_doors.register_door("technic:stainless_steel_block", "Stainless Steel", "technic_stainless_steel_block.png", ts_doors.sounds.metal, "technic:stainless_steel_ingot")
+	ts_doors.register_door("technic:zinc_block", "Zinc", "technic_zinc_block.png", ts_doors.sounds.metal, "technic:zinc_ingot")
 
-	ts_doors.register_door("technic:concrete", "Concrete", "technic_concrete_block.png")
-	ts_doors.register_door("technic:blast_resistant_concrete", "Blast Resistant Concrete", "technic_blast_resistant_concrete_block.png")
+	ts_doors.register_door("technic:concrete", "Concrete", "technic_concrete_block.png", ts_doors.sounds.metal)
+	ts_doors.register_door("technic:blast_resistant_concrete", "Blast Resistant Concrete", "technic_blast_resistant_concrete_block.png", ts_doors.sounds.metal)
 end
 
 minetest.override_item("doors:door_steel", {
