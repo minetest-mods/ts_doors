@@ -401,6 +401,12 @@ function ts_doors.workshop.update_formspec(pos)
 	fs = fs .. "image[7.5,2;1,1;gui_furnace_arrow_bg.png^[lowpart:" .. meta:get_int("progress") * 10 .. ":gui_furnace_arrow_fg.png^[transformR180]"
 	fs = fs .. "list[context;output;7.5,3;1,1]"
 	fs = fs .. "list[current_player;main;0.5,5;8,4]"
+	fs = fs .. "listring[current_player;main]"
+	fs = fs .. "listring[context;material]"
+	fs = fs .. "listring[current_player;main]"
+	fs = fs .. "listring[context;steel]"
+	fs = fs .. "listring[current_player;main]"
+	fs = fs .. "listring[context;output]"
 	meta:set_string("formspec", fs)
 end
 
