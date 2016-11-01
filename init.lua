@@ -4,11 +4,19 @@ ts_doors.registered_doors = {}
 
 ts_doors.sounds = {}
 
-ts_doors.sounds.metal = {
-	sounds = default.node_sound_metal_defaults(),
-	sound_open = "doors_steel_door_open",
-	sound_close = "doors_steel_door_close",
-}
+if default.node_sounds_metal_defaults() then
+	ts_doors.sounds.metal = {
+		sounds = default.node_sound_metal_defaults(),
+		sound_open = "doors_steel_door_open",
+		sound_close = "doors_steel_door_close",
+	}
+else
+	ts_doors.sounds.metal = {
+		sounds = default.node_sound_stone_defaults(),
+		sound_open = "doors_steel_door_open",
+		sound_close = "doors_steel_door_close",
+	}
+end
 
 ts_doors.sounds.wood = {
 	sounds = default.node_sound_wood_defaults(),
@@ -238,7 +246,7 @@ if minetest.get_modpath("moretrees") then
 end
 
 
-ts_doors.register_door("default:bronzeblock", "Bronze", "default_bronze_block.png",ts_doors.sounds.metal, "default:bronze_ingot")
+ts_doors.register_door("default:bronzeblock", "Bronze", "default_bronze_block.png", ts_doors.sounds.metal, "default:bronze_ingot")
 ts_doors.register_door("default:copperblock", "Copper", "default_copper_block.png", ts_doors.sounds.metal, "default:copper_ingot")
 ts_doors.register_door("default:diamondblock", "Diamond", "default_diamond_block.png", ts_doors.sounds.metal, "default:diamond")
 ts_doors.register_door("default:goldblock", "Gold", "default_gold_block.png", ts_doors.sounds.metal, "default:gold_ingot")
