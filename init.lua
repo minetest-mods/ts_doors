@@ -4,7 +4,7 @@ ts_doors.registered_doors = {}
 
 ts_doors.sounds = {}
 
-if default.node_sounds_metal_defaults() then
+if default.node_sound_metal_defaults then
 	ts_doors.sounds.metal = {
 		sounds = default.node_sound_metal_defaults(),
 		sound_open = "doors_steel_door_open",
@@ -110,8 +110,6 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		end
 	end
 
-	door_groups.not_in_creative_inventory = 1
-
 	local trapdoor_groups = copytable(door_groups)
 
 	doors.register("ts_doors:door_" .. item:gsub(":", "_"), {
@@ -123,9 +121,6 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		sound_open = sounds.sound_open or nil,
 		sound_close = sounds.sound_close or nil,
 	})
-	minetest.override_item("ts_doors:door_" .. item:gsub(":", "_"), {
-		groups = { not_in_creative_inventory = 1 }
-	})
 
 	doors.register("ts_doors:door_full_" .. item:gsub(":", "_"), {
 		tiles = { { name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full.png^[noalpha", backface_culling = true } },
@@ -135,9 +130,6 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		sounds = sounds.sounds or nil,
 		sound_open = sounds.sound_open or nil,
 		sound_close = sounds.sound_close or nil,
-	})
-	minetest.override_item("ts_doors:door_full_" .. item:gsub(":", "_"), {
-		groups = { not_in_creative_inventory = 1 }
 	})
 
 	doors.register_trapdoor("ts_doors:trapdoor_" .. item:gsub(":", "_"), {
@@ -179,9 +171,6 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		sound_open = sounds.sound_open or nil,
 		sound_close = sounds.sound_close or nil,
 	})
-	minetest.override_item("ts_doors:door_locked_" .. item:gsub(":", "_"), {
-		groups = { not_in_creative_inventory = 1 }
-	})
 
 	doors.register("ts_doors:door_full_locked_" .. item:gsub(":", "_"), {
 		tiles = { { name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full_locked.png^[noalpha", backface_culling = true } },
@@ -194,9 +183,6 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		sounds = sounds.sounds or nil,
 		sound_open = sounds.sound_open or nil,
 		sound_close = sounds.sound_close or nil,
-	})
-	minetest.override_item("ts_doors:door_full_locked_" .. item:gsub(":", "_"), {
-		groups = { not_in_creative_inventory = 1 }
 	})
 
 	doors.register_trapdoor("ts_doors:trapdoor_locked_" .. item:gsub(":", "_"), {
