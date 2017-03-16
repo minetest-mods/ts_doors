@@ -107,7 +107,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 	register_alias("doors:ts_door_full_locked_" .. item:gsub(":", "_"), "ts_doors:door_full_locked_" .. item:gsub(":", "_"))
 
 	local groups = minetest.registered_nodes[item].groups
-	local door_groups = {}
+	local door_groups = {door=1}
 	for k, v in pairs(groups) do
 		if k ~= "wood" then
 			door_groups[k] = v
