@@ -30,29 +30,11 @@ ts_doors.sounds.glass = {
 	sound_close = "doors_glass_door_close",
 }
 
-local function copytable(orig)
-	local orig_type = type(orig)
-	local copy
-	if orig_type == 'table' then
-		copy = {}
-		for orig_key, orig_value in next, orig, nil do
-			copy[copytable(orig_key)] = copytable(orig_value)
-		end
-		setmetatable(copy, copytable(getmetatable(orig)))
-	else
-		copy = orig
-	end
-	return copy
-end
-
 local function get_door_name(meta, item)
 	local door = ""
-	local int_to_bool = {}
-	int_to_bool[0] = false
-	int_to_bool[1] = true
-	local trapdoor = int_to_bool[meta:get_int("trapdoor")] or false
-	local locked = int_to_bool[meta:get_int("locked")] or false
-	local solid = int_to_bool[meta:get_int("solid")] or false
+	local trapdoor = meta:get_int("trapdoor") == 1
+	local locked = meta:get_int("locked") == 1
+	local solid = meta:get_int("solid") == 1
 	if trapdoor then
 		if locked then
 			if solid then
@@ -114,7 +96,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		end
 	end
 
-	local trapdoor_groups = copytable(door_groups)
+	local trapdoor_groups = table.copy(door_groups)
 
 	doors.register("ts_doors:door_" .. item:gsub(":", "_"), {
 		tiles = { { name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base.png^[noalpha^[makealpha:0,255,0", backface_culling = true } },
@@ -282,86 +264,15 @@ minetest.override_item("doors:trapdoor_steel", {
 
 ts_doors.workshop = {}
 
-function ts_doors.workshop.start(pos)
-	local node = minetest.get_node(pos)
-	if node.name ~= "ts_doors:workshop" then
-		return
-	end
-
-	local meta = minetest.get_meta(pos)
-	if meta:get_string("working_on") ~= "" then
-		return
-	end
-	local inv = meta:get_inventory()
-	local selection = meta:get_string("selection")
-	local material = inv:get_stack("material", 1):get_name()
-	local material_needed_name = inv:get_stack("material_needed", 1):get_name()
-	local material_needed = inv:get_stack("material_needed", 1):get_count()
-	local material_ok = inv:get_stack("material", 1):get_count() >= material_needed
-	local steel = inv:get_stack("steel", 1):get_name()
-	local steel_needed = inv:get_stack("steel_needed", 1):get_count()
-	local steel_ok = inv:get_stack("steel", 1):get_count() >= steel_needed
-
-	if not (material_ok and steel_ok
-			and (steel and steel == "default:steel_ingot" or steel_needed == 0)
-			and selection and selection ~= ""
-			and material == material_needed_name)
-	then
-		return
-	end
-
-	if not inv:room_for_item("output", { name = selection, count = 1 }) then
-		return
-	end
-
-	meta:set_string("working_on", selection)
-	meta:set_int("progress", 0)
-	inv:remove_item("material", { name = material, count = material_needed })
-	inv:remove_item("steel", { name = "default:steel_ingot", count = steel_needed })
-	ts_doors.workshop.step(pos)
-end
-
-function ts_doors.workshop.step(pos)
-	local node = minetest.get_node(pos)
-	if node.name ~= "ts_doors:workshop" then
-		return
-	end
-	local meta = minetest.get_meta(pos)
-	if meta:get_string("working_on") == "" then
-		return
-	end
-	local inv = meta:get_inventory()
-	local progress = meta:get_int("progress")
-	progress = progress + 1
-	if progress < 10 then
-		minetest.after(0.2, ts_doors.workshop.step, pos)
-	else
-		meta:set_int("progress", 0)
-		progress = 0
-		inv:add_item("output", meta:get_string("working_on"))
-		meta:set_string("working_on", "")
-		ts_doors.workshop.start(pos)
-	end
-	meta:set_int("progress", progress)
-	ts_doors.workshop.update_formspec(pos)
-end
-
 function ts_doors.workshop.update_formspec(pos)
-	local node = minetest.get_node(pos)
-	if node.name ~= "ts_doors:workshop" then
-		return
-	end
 	local meta = minetest.get_meta(pos)
 	local page = meta:get_int("page")
 	local maxpage = meta:get_int("maxpage")
 	local selection = meta:get_string("selection")
 
-	local int_to_bool = {}
-	int_to_bool[0] = false
-	int_to_bool[1] = true
-	local trapdoor = int_to_bool[meta:get_int("trapdoor")] or false
-	local locked = int_to_bool[meta:get_int("locked")] or false
-	local solid = int_to_bool[meta:get_int("solid")] or false
+	local trapdoor = meta:get_int("trapdoor") == 1
+	local locked = meta:get_int("locked") == 1
+	local solid = meta:get_int("solid") == 1
 
 	if page < 1 then
 		page = maxpage
@@ -453,10 +364,6 @@ function ts_doors.workshop.update_formspec(pos)
 end
 
 local function update_inventory(pos)
-	local node = minetest.get_node(pos)
-	if node.name ~= "ts_doors:workshop" then
-		return
-	end
 	local meta = minetest.get_meta(pos)
 
 	local itemcount = 0
@@ -474,13 +381,9 @@ local function update_inventory(pos)
 	inv:set_size("steel", 1)
 	inv:set_size("output", 1)
 
-	local int_to_bool = {}
-	int_to_bool[0] = false
-	int_to_bool[1] = true
-
-	local trapdoor = int_to_bool[meta:get_int("trapdoor")] or false
-	local locked = int_to_bool[meta:get_int("locked")] or false
-	local solid = int_to_bool[meta:get_int("solid")] or false
+	local trapdoor = meta:get_int("trapdoor") == 1
+	local locked = meta:get_int("locked") == 1
+	local solid = meta:get_int("solid") == 1
 
 	for item, recipe in pairs(ts_doors.registered_doors) do
 		if trapdoor then
@@ -551,8 +454,6 @@ local function update_inventory(pos)
 		inv:add_item("material_needed", { name = ts_doors.registered_doors[door], count = material_needed })
 		inv:add_item("steel_needed", { name = "default:steel_ingot", count = steel_needed })
 	end
-	ts_doors.workshop.update_formspec(pos)
-	ts_doors.workshop.start(pos)
 end
 
 local function on_receive_fields(pos, formname, fields, sender)
@@ -582,7 +483,6 @@ local function on_receive_fields(pos, formname, fields, sender)
 			end
 		end
 	end
-	update_inventory(pos)
 end
 
 local function on_construct(pos)
@@ -595,7 +495,6 @@ local function on_construct(pos)
 	meta:set_int("page", 1)
 	meta:set_int("maxpage", 1)
 	meta:set_string("selection", "")
-	update_inventory(pos)
 end
 
 local function allow_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
@@ -643,15 +542,12 @@ local function allow_metadata_inventory_take(pos, listname, index, stack, player
 end
 
 local function on_metadata_inventory_move(pos, from_list, from_index, to_list, to_index, count, player)
-	update_inventory(pos)
 end
 
 local function on_metadata_inventory_put(pos, listname, index, stack, player)
-	update_inventory(pos)
 end
 
 local function on_metadata_inventory_take(pos, listname, index, stack, player)
-	update_inventory(pos)
 end
 
 local function can_dig(pos, player)
@@ -663,7 +559,7 @@ local function can_dig(pos, player)
 	end
 end
 
-minetest.register_node("ts_doors:workshop", {
+ts_workshop.register_workshop("ts_doors", "workshop", {
 	description = "Door Workshop",
 	tiles = {
 		"default_wood.png",
@@ -700,6 +596,49 @@ minetest.register_node("ts_doors:workshop", {
 	on_metadata_inventory_take = on_metadata_inventory_take,
 	can_dig = can_dig,
 	sounds = default.node_sound_wood_defaults(),
+	enough_supply = function(pos, selection)
+		local meta = minetest.get_meta(pos)
+		if meta:get_string("working_on") ~= "" then
+			return
+		end
+		local inv = meta:get_inventory()
+		local selection = meta:get_string("selection")
+		local material = inv:get_stack("material", 1):get_name()
+		local material_needed_name = inv:get_stack("material_needed", 1):get_name()
+		local material_needed = inv:get_stack("material_needed", 1):get_count()
+		local material_ok = inv:get_stack("material", 1):get_count() >= material_needed
+		local steel = inv:get_stack("steel", 1):get_name()
+		local steel_needed = inv:get_stack("steel_needed", 1):get_count()
+		local steel_ok = inv:get_stack("steel", 1):get_count() >= steel_needed
+
+		if not (material_ok and steel_ok
+				and (steel and steel == "default:steel_ingot" or steel_needed == 0)
+				and selection and selection ~= ""
+				and material == material_needed_name)
+		then
+			return false
+		else
+			return true
+		end
+	end,
+	remove_supply = function(pos, selection)
+		local meta = minetest.get_meta(pos)
+		local inv = meta:get_inventory()
+		local material = inv:get_stack("material", 1):get_name()
+		local material_needed = inv:get_stack("material_needed", 1):get_count()
+		local steel_needed = inv:get_stack("steel_needed", 1):get_count()
+
+		inv:remove_item("material", { name = material, count = material_needed })
+		inv:remove_item("steel", { name = "default:steel_ingot", count = steel_needed })
+	end,
+	update_inventory = update_inventory,
+	update_formspec = ts_doors.workshop.update_formspec,
+	on_receive_fields = on_receive_fields,
+	on_construct = on_construct,
+	allow_metadata_inventory_move = allow_metadata_inventory_move,
+	allow_metadata_inventory_put = allow_metadata_inventory_put,
+	allow_metadata_inventory_take = allow_metadata_inventory_take,
+	can_dig = can_dig,
 })
 
 minetest.register_lbm({
