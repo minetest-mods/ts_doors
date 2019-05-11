@@ -96,13 +96,11 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		end
 	end
 
-	local trapdoor_groups = table.copy(door_groups)
-
 	doors.register("ts_doors:door_" .. item:gsub(":", "_"), {
 		tiles = { { name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base.png^[noalpha^[makealpha:0,255,0", backface_culling = true } },
 		description = description .. " Windowed Door",
 		inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_inv.png^[noalpha^[makealpha:0,255,0",
-		groups = door_groups,
+		groups = table.copy(door_groups),
 		sounds = sounds.sounds or nil,
 		sound_open = sounds.sound_open or nil,
 		sound_close = sounds.sound_close or nil,
@@ -112,7 +110,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		tiles = { { name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full.png^[noalpha", backface_culling = true } },
 		description = "Solid " .. description .. " Door",
 		inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full_inv.png^[noalpha^[makealpha:0,255,0",
-		groups = door_groups,
+		groups = table.copy(door_groups),
 		sounds = sounds.sounds or nil,
 		sound_open = sounds.sound_open or nil,
 		sound_close = sounds.sound_close or nil,
@@ -124,7 +122,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		wield_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor.png^[noalpha^[makealpha:0,255,0",
 		tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor.png^[noalpha^[makealpha:0,255,0",
 		tile_side = texture .. "^[colorize:#fff:30",
-		groups = trapdoor_groups,
+		groups = table.copy(door_groups),
 		sounds = sounds.sounds or nil,
 		sound_open = sounds.sound_open or nil,
 		sound_close = sounds.sound_close or nil,
@@ -136,21 +134,20 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		wield_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full.png^[noalpha",
 		tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full.png^[noalpha",
 		tile_side = texture .. "^[colorize:#fff:30",
-		groups = trapdoor_groups,
+		groups = table.copy(door_groups),
 		sounds = sounds.sounds or nil,
 		sound_open = sounds.sound_open or nil,
 		sound_close = sounds.sound_close or nil,
 	})
 
 	door_groups.level = 2
-	trapdoor_groups.level = 2
 
 	doors.register("ts_doors:door_locked_" .. item:gsub(":", "_"), {
 		tiles = { { name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_locked.png^[noalpha^[makealpha:0,255,0", backface_culling = true } },
 		description = "Windowed Locked " .. description .. " Door",
 		inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_locked_inv.png^[noalpha^[makealpha:0,255,0",
 		protected = true,
-		groups = door_groups,
+		groups = table.copy(door_groups),
 		sound_open = "doors_steel_door_open",
 		sound_close = "doors_steel_door_close",
 		sounds = sounds.sounds or nil,
@@ -163,7 +160,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		description = "Solid Locked " .. description .. " Door",
 		inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full_locked_inv.png^[noalpha^[makealpha:0,255,0",
 		protected = true,
-		groups = door_groups,
+		groups = table.copy(door_groups),
 		sound_open = "doors_steel_door_open",
 		sound_close = "doors_steel_door_close",
 		sounds = sounds.sounds or nil,
@@ -178,7 +175,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_locked.png^[noalpha^[makealpha:0,255,0",
 		tile_side = texture .. "^[colorize:#fff:30",
 		protected = true,
-		groups = trapdoor_groups,
+		groups = table.copy(door_groups),
 		sounds = sounds.sounds or nil,
 		sound_open = sounds.sound_open or nil,
 		sound_close = sounds.sound_close or nil,
@@ -191,7 +188,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 		tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full_locked.png^[noalpha",
 		tile_side = texture .. "^[colorize:#fff:30",
 		protected = true,
-		groups = trapdoor_groups,
+		groups = table.copy(door_groups),
 		sounds = sounds.sounds or nil,
 		sound_open = sounds.sound_open or nil,
 		sound_close = sounds.sound_close or nil,
@@ -215,6 +212,20 @@ if minetest.get_modpath("moretrees") then
 	ts_doors.register_door("moretrees:sequoia_planks", "Sequoia", "moretrees_sequoia_wood.png", ts_doors.sounds.wood)
 	ts_doors.register_door("moretrees:spruce_planks", "Spruce", "moretrees_spruce_wood.png", ts_doors.sounds.wood)
 	ts_doors.register_door("moretrees:willow_planks", "Willow", "moretrees_willow_wood.png", ts_doors.sounds.wood)
+end
+
+if minetest.get_modpath("ethereal") then
+	ts_doors.register_door("ethereal:banana_wood", "Banana", "banana_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:birch_wood", "Birch", "moretrees_birch_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:frost_wood", "Frost", "frost_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:mushroom_trunk", "Mushroom", "mushroom_trunk.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:palm_wood", "Palm", "moretrees_palm_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:redwood_wood", "Redwood", "redwood_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:sakura_wood", "Sakura", "ethereal_sakura_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:scorched_tree", "Scorched", "scorched_tree.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:willow_wood", "Willow", "willow_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:yellow_wood", "Healing Tree", "yellow_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:crystal_block", "Crystal", "crystal_block.png", ts_doors.sounds.metal, "ethereal:crystal_ingot")
 end
 
 
