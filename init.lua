@@ -4,6 +4,18 @@ ts_doors.registered_doors = {}
 
 ts_doors.sounds = {}
 
+-- Used for localization
+local S = minetest.get_translator("ts_doors")
+
+-- Use this to generate the translation template file.
+--[[
+local oldS = S
+local function S(x)
+    print(x .. "=")
+    return oldS(x)
+end
+]]
+
 if default.node_sound_metal_defaults then
 	ts_doors.sounds.metal = {
 		sounds = default.node_sound_metal_defaults(),
@@ -31,46 +43,31 @@ ts_doors.sounds.glass = {
 }
 
 local function get_door_name(meta, item)
-	local door = ""
-	local trapdoor = meta:get_int("trapdoor") == 1
-	local locked = meta:get_int("locked") == 1
-	local solid = meta:get_int("solid") == 1
-	if trapdoor then
-		if locked then
-			if solid then
-				door = "ts_doors:trapdoor_full_locked_" .. item:gsub(":", "_")
-			else
-				door = "ts_doors:trapdoor_locked_" .. item:gsub(":", "_")
-			end
-		else
-			if solid then
-				door = "ts_doors:trapdoor_full_" .. item:gsub(":", "_")
-			else
-				door = "ts_doors:trapdoor_" .. item:gsub(":", "_")
-			end
-		end
-	else
-		if locked then
-			if solid then
-				door = "ts_doors:door_full_locked_" .. item:gsub(":", "_")
-			else
-				door = "ts_doors:door_locked_" .. item:gsub(":", "_")
-			end
-		else
-			if solid then
-				door = "ts_doors:door_full_" .. item:gsub(":", "_")
-			else
-				door = "ts_doors:door_" .. item:gsub(":", "_")
-			end
-		end
-	end
-	return door
+	local door_type_string = meta:get_int("trapdoor") == 1 and "trapdoor_" or "door_"
+	local locked_string = meta:get_int("locked") == 1 and "locked_" or ""
+	local solid_string = meta:get_int("solid") == 1 and "full_" or ""
+	return "ts_doors:" .. door_type_string .. solid_string .. locked_string .. item:gsub(":", "_")
 end
 
-local function register_alias(name, convert_to)
+local function register_door_alias(name, convert_to)
 	minetest.register_alias(name, convert_to)
 	minetest.register_alias(name .. "_a", convert_to .. "_a")
 	minetest.register_alias(name .. "_b", convert_to .. "_b")
+	minetest.register_alias(name .. "_c", convert_to .. "_c")
+	minetest.register_alias(name .. "_d", convert_to .. "_d")
+end
+local function register_trapdoor_alias(name, convert_to)
+	minetest.register_alias(name, convert_to)
+	minetest.register_alias(name .. "_open", convert_to .. "_open")
+end
+
+function ts_doors.register_alias(name, convert_to)
+	name = name:gsub(":", "_")
+	convert_to = convert_to:gsub(":", "_")
+	for _,style in pairs({"", "full_", "locked_", "full_locked_"}) do
+		register_door_alias("ts_doors:door_" .. style .. name, "ts_doors:door_" .. style .. convert_to)
+		register_trapdoor_alias("ts_doors:trapdoor_" .. style .. name, "ts_doors:trapdoor_" .. style .. convert_to)
+	end
 end
 
 function ts_doors.register_door(item, description, texture, sounds, recipe)
@@ -83,10 +80,11 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 	end
 	recipe = recipe or item
 	ts_doors.registered_doors[item:gsub(":", "_")] = recipe
-	register_alias("doors:ts_door_" .. item:gsub(":", "_"), "ts_doors:door_" .. item:gsub(":", "_"))
-	register_alias("doors:ts_door_full_" .. item:gsub(":", "_"), "ts_doors:door_full_" .. item:gsub(":", "_"))
-	register_alias("doors:ts_door_locked_" .. item:gsub(":", "_"), "ts_doors:door_locked_" .. item:gsub(":", "_"))
-	register_alias("doors:ts_door_full_locked_" .. item:gsub(":", "_"), "ts_doors:door_full_locked_" .. item:gsub(":", "_"))
+	register_door_alias("doors:ts_door_" .. item:gsub(":", "_"), "ts_doors:door_" .. item:gsub(":", "_"))
+	register_door_alias("doors:ts_door_full_" .. item:gsub(":", "_"), "ts_doors:door_full_" .. item:gsub(":", "_"))
+	register_door_alias("doors:ts_door_locked_" .. item:gsub(":", "_"), "ts_doors:door_locked_" .. item:gsub(":", "_"))
+	register_door_alias("doors:ts_door_full_locked_" .. item:gsub(":", "_"), "ts_doors:door_full_locked_" .. item:gsub(":", "_"))
+
 
 	local groups = minetest.registered_nodes[item].groups
 	local door_groups = {door=1}
@@ -98,7 +96,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 
 	doors.register("ts_doors:door_" .. item:gsub(":", "_"), {
 		tiles = { { name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base.png^[noalpha^[makealpha:0,255,0", backface_culling = true } },
-		description = description .. " Windowed Door",
+		description = S(description .. " Windowed Door"),
 		inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_inv.png^[noalpha^[makealpha:0,255,0",
 		groups = table.copy(door_groups),
 		sounds = sounds.sounds or nil,
@@ -108,7 +106,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 
 	doors.register("ts_doors:door_full_" .. item:gsub(":", "_"), {
 		tiles = { { name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full.png^[noalpha", backface_culling = true } },
-		description = "Solid " .. description .. " Door",
+		description = S("Solid " .. description .. " Door"),
 		inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full_inv.png^[noalpha^[makealpha:0,255,0",
 		groups = table.copy(door_groups),
 		sounds = sounds.sounds or nil,
@@ -117,7 +115,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 	})
 
 	doors.register_trapdoor("ts_doors:trapdoor_" .. item:gsub(":", "_"), {
-		description = "Windowed " .. description .. " Trapdoor",
+		description = S("Windowed " .. description .. " Trapdoor"),
 		inventory_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor.png^[noalpha^[makealpha:0,255,0",
 		wield_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor.png^[noalpha^[makealpha:0,255,0",
 		tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor.png^[noalpha^[makealpha:0,255,0",
@@ -129,7 +127,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 	})
 
 	doors.register_trapdoor("ts_doors:trapdoor_full_" .. item:gsub(":", "_"), {
-		description = "Solid " .. description .. " Trapdoor",
+		description = S("Solid " .. description .. " Trapdoor"),
 		inventory_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full.png^[noalpha",
 		wield_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full.png^[noalpha",
 		tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full.png^[noalpha",
@@ -144,7 +142,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 
 	doors.register("ts_doors:door_locked_" .. item:gsub(":", "_"), {
 		tiles = { { name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_locked.png^[noalpha^[makealpha:0,255,0", backface_culling = true } },
-		description = "Windowed Locked " .. description .. " Door",
+		description = S("Windowed Locked " .. description .. " Door"),
 		inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_locked_inv.png^[noalpha^[makealpha:0,255,0",
 		protected = true,
 		groups = table.copy(door_groups),
@@ -157,7 +155,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 
 	doors.register("ts_doors:door_full_locked_" .. item:gsub(":", "_"), {
 		tiles = { { name = "[combine:32x38:0,0=" .. texture .. ":0,16=" .. texture .. ":0,32=" .. texture .. ":16,0=" .. texture .. ":16,16=" .. texture .. ":16,32=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full_locked.png^[noalpha", backface_culling = true } },
-		description = "Solid Locked " .. description .. " Door",
+		description = S("Solid Locked " .. description .. " Door"),
 		inventory_image = "[combine:32x32:0,8=" .. texture .. ":16,8=" .. texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_full_locked_inv.png^[noalpha^[makealpha:0,255,0",
 		protected = true,
 		groups = table.copy(door_groups),
@@ -169,7 +167,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 	})
 
 	doors.register_trapdoor("ts_doors:trapdoor_locked_" .. item:gsub(":", "_"), {
-		description = "Windowed Locked " .. description .. " Trapdoor",
+		description = S("Windowed Locked " .. description .. " Trapdoor"),
 		inventory_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_locked.png^[noalpha^[makealpha:0,255,0",
 		wield_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_locked.png^[noalpha^[makealpha:0,255,0",
 		tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_locked.png^[noalpha^[makealpha:0,255,0",
@@ -182,7 +180,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 	})
 
 	doors.register_trapdoor("ts_doors:trapdoor_full_locked_" .. item:gsub(":", "_"), {
-		description = "Solid Locked " .. description .. " Trapdoor",
+		description = S("Solid Locked " .. description .. " Trapdoor"),
 		inventory_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full_locked.png^[noalpha",
 		wield_image = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full_locked.png^[noalpha",
 		tile_front = texture .. "^[transformR90^[colorize:#fff:30^ts_doors_base_trapdoor_full_locked.png^[noalpha",
@@ -242,32 +240,36 @@ if minetest.get_modpath("moreores") then
 end
 
 if minetest.get_modpath("technic") then
-	ts_doors.register_door("technic:brass_block", "Brass", "technic_brass_block.png", ts_doors.sounds.metal, "technic:brass_ingot")
 	ts_doors.register_door("technic:carbon_steel_block", "Carbon Steel", "technic_carbon_steel_block.png", ts_doors.sounds.metal, "technic:carbon_steel_ingot")
 	ts_doors.register_door("technic:cast_iron_block", "Cast Iron", "technic_cast_iron_block.png", ts_doors.sounds.metal, "technic:cast_iron_ingot")
 	ts_doors.register_door("technic:chromium_block", "Chromium", "technic_chromium_block.png", ts_doors.sounds.metal, "technic:chromium_ingot")
 	ts_doors.register_door("technic:lead_block", "Lead", "technic_lead_block.png", ts_doors.sounds.metal, "technic:lead_ingot")
 	ts_doors.register_door("technic:stainless_steel_block", "Stainless Steel", "technic_stainless_steel_block.png", ts_doors.sounds.metal, "technic:stainless_steel_ingot")
 	ts_doors.register_door("technic:zinc_block", "Zinc", "technic_zinc_block.png", ts_doors.sounds.metal, "technic:zinc_ingot")
-
-	ts_doors.register_door("technic:concrete", "Concrete", "technic_concrete_block.png", ts_doors.sounds.metal)
 	ts_doors.register_door("technic:blast_resistant_concrete", "Blast Resistant Concrete", "technic_blast_resistant_concrete_block.png", ts_doors.sounds.metal)
 end
 
+if minetest.get_modpath("basic_materials") then
+	ts_doors.register_door("basic_materials:brass_block", "Brass", "basic_materials_brass_block.png", ts_doors.sounds.metal, "basic_materials:brass_ingot")
+	ts_doors.register_door("basic_materials:concrete_block", "Concrete", "basic_materials_concrete_block.png", ts_doors.sounds.metal)
+	ts_doors.register_alias("technic:brass_block", "basic_materials:brass_block")
+	ts_doors.register_alias("technic:concrete", "basic_materials:concrete_block")
+end
+
 minetest.override_item("doors:door_steel", {
-	description = "Windowed Locked Plain Steel Door",
+	description = S("Windowed Locked Plain Steel Door"),
 })
 
 minetest.override_item("doors:door_wood", {
-	description = "Windowed Mixed Wood Door",
+	description = S("Windowed Mixed Wood Door"),
 })
 
 minetest.override_item("doors:trapdoor", {
-	description = "Windowed Mixed Wood Trapdoor",
+	description = S("Windowed Mixed Wood Trapdoor"),
 })
 
 minetest.override_item("doors:trapdoor_steel", {
-	description = "Windowed Locked Plain Steel Trapdoor",
+	description = S("Windowed Locked Plain Steel Trapdoor"),
 })
 
 
@@ -396,37 +398,6 @@ local function update_inventory(pos)
 	local locked = meta:get_int("locked") == 1
 	local solid = meta:get_int("solid") == 1
 
-	for item, recipe in pairs(ts_doors.registered_doors) do
-		if trapdoor then
-			if locked then
-				if solid then
-					inv:add_item("list", "ts_doors:trapdoor_full_locked_" .. item:gsub(":", "_"))
-				else
-					inv:add_item("list", "ts_doors:trapdoor_locked_" .. item:gsub(":", "_"))
-				end
-			else
-				if solid then
-					inv:add_item("list", "ts_doors:trapdoor_full_" .. item:gsub(":", "_"))
-				else
-					inv:add_item("list", "ts_doors:trapdoor_" .. item:gsub(":", "_"))
-				end
-			end
-		else
-			if locked then
-				if solid then
-					inv:add_item("list", "ts_doors:door_full_locked_" .. item:gsub(":", "_"))
-				else
-					inv:add_item("list", "ts_doors:door_locked_" .. item:gsub(":", "_"))
-				end
-			else
-				if solid then
-					inv:add_item("list", "ts_doors:door_full_" .. item:gsub(":", "_"))
-				else
-					inv:add_item("list", "ts_doors:door_" .. item:gsub(":", "_"))
-				end
-			end
-		end
-	end
 	local selection = meta:get_string("selection")
 	if selection and selection ~= "" then
 		local door = selection:sub(10)
@@ -571,7 +542,7 @@ local function can_dig(pos, player)
 end
 
 ts_workshop.register_workshop("ts_doors", "workshop", {
-	description = "Door Workshop",
+	description = S("Door Workshop"),
 	tiles = {
 		"default_wood.png",
 		"default_wood.png",
@@ -644,12 +615,6 @@ ts_workshop.register_workshop("ts_doors", "workshop", {
 	end,
 	update_inventory = update_inventory,
 	update_formspec = ts_doors.workshop.update_formspec,
-	on_receive_fields = on_receive_fields,
-	on_construct = on_construct,
-	allow_metadata_inventory_move = allow_metadata_inventory_move,
-	allow_metadata_inventory_put = allow_metadata_inventory_put,
-	allow_metadata_inventory_take = allow_metadata_inventory_take,
-	can_dig = can_dig,
 })
 
 minetest.register_lbm({
