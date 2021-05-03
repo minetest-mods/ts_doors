@@ -213,17 +213,17 @@ if minetest.get_modpath("moretrees") then
 end
 
 if minetest.get_modpath("ethereal") then
-	ts_doors.register_door("ethereal:banana_wood", "Banana", "banana_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:banana_wood", "Banana", "ethereal_banana_wood.png", ts_doors.sounds.wood)
 	ts_doors.register_door("ethereal:birch_wood", "Birch", "moretrees_birch_wood.png", ts_doors.sounds.wood)
-	ts_doors.register_door("ethereal:frost_wood", "Frost", "frost_wood.png", ts_doors.sounds.wood)
-	ts_doors.register_door("ethereal:mushroom_trunk", "Mushroom", "mushroom_trunk.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:frost_wood", "Frost", "ethereal_frost_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:mushroom_trunk", "Mushroom", "ethereal_mushroom_trunk.png", ts_doors.sounds.wood)
 	ts_doors.register_door("ethereal:palm_wood", "Palm", "moretrees_palm_wood.png", ts_doors.sounds.wood)
-	ts_doors.register_door("ethereal:redwood_wood", "Redwood", "redwood_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:redwood_wood", "Redwood", "ethereal_redwood_wood.png", ts_doors.sounds.wood)
 	ts_doors.register_door("ethereal:sakura_wood", "Sakura", "ethereal_sakura_wood.png", ts_doors.sounds.wood)
-	ts_doors.register_door("ethereal:scorched_tree", "Scorched", "scorched_tree.png", ts_doors.sounds.wood)
-	ts_doors.register_door("ethereal:willow_wood", "Willow", "willow_wood.png", ts_doors.sounds.wood)
-	ts_doors.register_door("ethereal:yellow_wood", "Healing Tree", "yellow_wood.png", ts_doors.sounds.wood)
-	ts_doors.register_door("ethereal:crystal_block", "Crystal", "crystal_block.png", ts_doors.sounds.metal, "ethereal:crystal_ingot")
+	ts_doors.register_door("ethereal:scorched_tree", "Scorched", "ethereal_scorched_tree.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:willow_wood", "Willow", "ethereal_willow_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:yellow_wood", "Healing Tree", "ethereal_yellow_wood.png", ts_doors.sounds.wood)
+	ts_doors.register_door("ethereal:crystal_block", "Crystal", "ethereal_crystal_block.png", ts_doors.sounds.metal, "ethereal:crystal_ingot")
 end
 
 
