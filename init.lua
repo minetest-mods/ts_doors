@@ -628,9 +628,9 @@ minetest.register_lbm({
 minetest.register_craft({
 	output = "ts_doors:workshop",
 	recipe = {
-		{ "default:wood", "default:wood", "default:wood" },
-		{ "default:wood", "doors:door_wood", "default:wood" },
-		{ "default:wood", "default:wood", "default:wood" },
+		{ "group:wood", "group:wood", "group:wood" },
+		{ "group:wood", "doors:door_wood", "group:wood" },
+		{ "group:wood", "group:wood", "group:wood" },
 	}
 })
 
