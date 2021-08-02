@@ -105,7 +105,7 @@ function ts_doors.register_door(item, description, texture, sounds, recipe)
 
 
 	local groups = minetest.registered_nodes[item].groups
-	local door_groups = {door=1}
+	local door_groups = {door=1, not_in_creative_inventory=1}
 	for k, v in pairs(groups) do
 		if k ~= "wood" then
 			door_groups[k] = v
