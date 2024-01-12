@@ -87,7 +87,7 @@ end
 
 function ts_doors.register_door(item, description, texture, sounds, recipe)
 	if not minetest.registered_nodes[item] then
-		minetest.log("[ts_doors] bug found: "..item.." is not a registered node. Cannot create doors")
+		minetest.log("error", "[ts_doors] Bug found: "..item.." is not a registered node. Can not create doors.")
 		return
 	end
 	if not sounds then
